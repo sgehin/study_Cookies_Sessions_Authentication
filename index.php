@@ -1,31 +1,41 @@
-<!DOCTYPE html>
+<?php// setupusers.php
+require_once 'login.php';
+$connection = connectDB();
 
-<?php
-$username = 'admin';
-$password = 'letmein';
+$query = "CREATE TABLE users (
+    forename VARCHAR(32) NOT NULL,
+    surname  VARCHAR(32) NOT NULL,
+    username VARCHAR(32) NOT NULL UNIQUE,
+    password VARCHAR(32) NOT NULL)";
 
-if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])){
-    
-    if ($_SERVER['PHP_AUTH_USER'] == $username && 
-         $_SERVER['PHP_AUTH_PW'] == $password)
-        echo "You are now logged in";
-    else die("Invalid username / password combination");    
-    }
+$result = $connection->query($query);
+if (!$result) die($connection->error);
 
-else {
-    header('WWW-Authenticate: Basic realm="Restricted Section"');
-    header('HTTP/1.0 401 Unauthorized');
-    die("Please enter your username and password");
-}    
+$salt1 = "qm&h";
+$salt2 = "pg!@";
+
+$forename = 'Bill';
+$surname = 'Smith';
+$username = 'bsmith';
+$password = 'mysecret';
+
+$token = hash('ripemd128', "$salt1$password$salt2");
+
+add_user($connection,$forename,$surname,$username,$token);
+
+$forename = 'Pauline';
+$surname = 'Jones';
+$username = 'pjones';
+$password = 'acrobat';
+
+$token = hash('ripemd128', "$salt1$password$salt2");
+
+add_user($connection,$forename,$surname,$username,$token);
+
+function add_user($connection,'$fn','$sn','$un','$pw'){
+    $query = "INSERT INTO users VALUES('$fn','$sn','$un','$pw')";
+    $result = $connection->query($query);
+    if (!$result) die ($connection->error);
+}
 
 ?>
-
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title></title>
-    </head>
-    <body>
-      
-    </body>
-</html>
