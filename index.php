@@ -1,7 +1,16 @@
 <!DOCTYPE html>
 
-<?php setcookie('username','Hanna'); 
-      setcookie('username','Bas',time()+ 60 * 60 * 24 * 30,'/'); // expire date
+<?php 
+if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])){
+    echo "Welcome User: " . $_SERVER['PHP_AUTH_USER'] . 
+         "Password :"     . $_SERVER['PHP_AUTH_PW'];
+}
+else {
+    header('WWW-Authenticate: Basic realm="Restricted Section"');
+    header('HTTP/1.0 401 Unauthorized');
+    die("Please enter your username and password");
+}    
+
 ?>
 
 <html>
@@ -10,8 +19,6 @@
         <title></title>
     </head>
     <body>
-        <?php
-        // put your code here
-        ?>
+      
     </body>
 </html>
